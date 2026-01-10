@@ -63,12 +63,12 @@ export default function GameSlot({ game, participantPick, expectedOpponent, elim
   const pickMatchesAway = participantPick === awayTeamAbbr;
 
   // Away slot: show pick if home is known (and isn't the pick), or show expected opponent if pick is home
-  const showPickInAwaySlot = !game.awayTeam && participantPick && !pickMatchesHome;
-  const showOpponentInAwaySlot = !game.awayTeam && expectedOpponent && (pickMatchesHome || (!participantPick));
+  const showPickInAwaySlot = !game.awayTeam && !!participantPick && !pickMatchesHome;
+  const showOpponentInAwaySlot = !game.awayTeam && !!expectedOpponent && (pickMatchesHome || !participantPick);
 
   // Home slot: show pick if away is known (and isn't the pick), or show expected opponent if pick is away
-  const showPickInHomeSlot = !game.homeTeam && participantPick && !pickMatchesAway && !showPickInAwaySlot;
-  const showOpponentInHomeSlot = !game.homeTeam && expectedOpponent && !showOpponentInAwaySlot && !showPickInHomeSlot;
+  const showPickInHomeSlot = !game.homeTeam && !!participantPick && !pickMatchesAway && !showPickInAwaySlot;
+  const showOpponentInHomeSlot = !game.homeTeam && !!expectedOpponent && !showOpponentInAwaySlot && !showPickInHomeSlot;
 
   return (
     <div
