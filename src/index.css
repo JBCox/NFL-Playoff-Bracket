@@ -1,0 +1,68 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&display=swap');
+
+/* Custom theme extending Tailwind */
+@theme {
+  --color-afc-primary: #002D72;
+  --color-afc-light: #0052CC;
+  --color-afc-bg: #E6F3FF;
+  --color-nfc-primary: #C8102E;
+  --color-nfc-light: #FF2E4C;
+  --color-nfc-bg: #FFE6EA;
+  --color-superbowl-primary: #FFD700;
+  --color-superbowl-secondary: #B8860B;
+  --color-superbowl-bg: #FFFDF0;
+  --color-pick-correct: #22C55E;
+  --color-pick-incorrect: #EF4444;
+  --color-pick-pending: #6B7280;
+}
+
+body {
+  @apply bg-gray-100 text-gray-900 font-sans m-0;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-200 rounded;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-400 rounded;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-500;
+}
+
+/* Bracket connector lines */
+.bracket-line {
+  stroke: #9CA3AF;
+  stroke-width: 2;
+  fill: none;
+}
+
+.bracket-line.correct {
+  stroke: #22C55E;
+}
+
+.bracket-line.incorrect {
+  stroke: #EF4444;
+}
+
+/* Live game pulse animation */
+@keyframes live-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.live-indicator {
+  animation: live-pulse 2s ease-in-out infinite;
+}
