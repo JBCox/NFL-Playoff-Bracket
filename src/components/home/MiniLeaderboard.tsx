@@ -1,12 +1,21 @@
 import type { LeaderboardEntry } from '../../types';
+import type { WinProbabilities } from '../../services/probabilityCalculator';
 import { Trophy, ChevronRight } from 'lucide-react';
+import WinProbabilityPill from '../ui/WinProbabilityPill';
 
 interface MiniLeaderboardProps {
   entries: LeaderboardEntry[];
   onViewBracket: (participantId: string) => void;
+  winProbabilities?: Map<string, WinProbabilities>;
+  eliminatedParticipants?: Map<string, boolean>;
 }
 
-export default function MiniLeaderboard({ entries, onViewBracket }: MiniLeaderboardProps) {
+export default function MiniLeaderboard({
+  entries,
+  onViewBracket,
+  winProbabilities,
+  eliminatedParticipants
+}: MiniLeaderboardProps) {
   const getRankStyle = (rank: number) => {
     switch (rank) {
       case 1:
@@ -43,36 +52,50 @@ export default function MiniLeaderboard({ entries, onViewBracket }: MiniLeaderbo
       </div>
 
       <div className="divide-y divide-gray-100">
-        {entries.map((entry) => (
-          <button
-            key={entry.participant.id}
-            onClick={() => onViewBracket(entry.participant.id)}
-            className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-50 active:bg-gray-100 transition-colors text-left border-l-4 ${getRankStyle(entry.rank)}`}
-          >
-            {/* Rank */}
-            <div className="w-6 flex justify-center">
-              {getRankIcon(entry.rank)}
-            </div>
+        {entries.map((entry) => {
+          const probability = winProbabilities?.get(entry.participant.name);
+          const isEliminated = eliminatedParticipants?.get(entry.participant.name) ?? false;
 
-            {/* Name & Stats */}
-            <div className="flex-1 min-w-0">
-              <div className="font-semibold text-gray-900 truncate">
-                {entry.participant.name}
+          return (
+            <button
+              key={entry.participant.id}
+              onClick={() => onViewBracket(entry.participant.id)}
+              className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-50 active:bg-gray-100 transition-colors text-left border-l-4 ${getRankStyle(entry.rank)}`}
+            >
+              {/* Rank */}
+              <div className="w-6 flex justify-center">
+                {getRankIcon(entry.rank)}
               </div>
-              <div className="text-xs text-gray-500">
-                {entry.possibleRemaining} pts still possible
+
+              {/* Name & Stats */}
+              <div className="flex-1 min-w-0">
+                <div className="font-semibold text-gray-900 truncate">
+                  {entry.participant.name}
+                </div>
+                <div className="text-xs text-gray-500">
+                  {entry.possibleRemaining} pts still possible
+                </div>
               </div>
-            </div>
 
-            {/* Score */}
-            <div className="text-right">
-              <div className="text-xl font-bold text-gray-900">{entry.score.total}</div>
-              <div className="text-xs text-gray-400">/ 25</div>
-            </div>
+              {/* Score */}
+              <div className="text-right">
+                <div className="text-xl font-bold text-gray-900">{entry.score.total}</div>
+                <div className="text-xs text-gray-400">/ 25</div>
+              </div>
 
-            <ChevronRight className="w-4 h-4 text-gray-400" />
-          </button>
-        ))}
+              {/* Win Probability */}
+              {probability !== undefined && (
+                <WinProbabilityPill
+                  probability={probability.vegas}
+                  isEliminated={isEliminated}
+                  size="sm"
+                />
+              )}
+
+              <ChevronRight className="w-4 h-4 text-gray-400" />
+            </button>
+          );
+        })}
       </div>
     </div>
   );

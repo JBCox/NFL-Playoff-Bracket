@@ -1,15 +1,25 @@
 import { useState, useEffect } from 'react';
 import type { LeaderboardEntry, Game } from '../../types';
+import type { WinProbabilities } from '../../services/probabilityCalculator';
 import { Trophy, Clock, ChevronDown, ChevronUp } from 'lucide-react';
 import InlineBracket from '../bracket/InlineBracket';
+import WinProbabilityPill from '../ui/WinProbabilityPill';
 
 interface BracketPreviewProps {
   entry: LeaderboardEntry;
   games: Game[];
   onClick: () => void;
+  winProbability?: WinProbabilities;
+  isEliminated?: boolean;
 }
 
-export default function BracketPreview({ entry, games, onClick }: BracketPreviewProps) {
+export default function BracketPreview({
+  entry,
+  games,
+  onClick,
+  winProbability,
+  isEliminated = false
+}: BracketPreviewProps) {
   const { participant, score, rank, possibleRemaining } = entry;
   const [isExpanded, setIsExpanded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -62,6 +72,14 @@ export default function BracketPreview({ entry, games, onClick }: BracketPreview
             <div className="text-2xl font-bold text-gray-900">
               {score.total}<span className="text-sm text-gray-400">/25</span>
             </div>
+            {/* Win Probability Pill */}
+            {winProbability !== undefined && (
+              <WinProbabilityPill
+                probability={winProbability.vegas}
+                isEliminated={isEliminated}
+                size="sm"
+              />
+            )}
             {/* Mobile expand/collapse indicator */}
             <div className="sm:hidden text-gray-400">
               {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
@@ -101,6 +119,26 @@ export default function BracketPreview({ entry, games, onClick }: BracketPreview
       {/* Expanded Bracket (Mobile Only) */}
       {isExpanded && isMobile && (
         <div className="px-4 pb-4 border-t border-gray-100 pt-4">
+          {/* Win Probability Breakdown */}
+          {winProbability !== undefined && (
+            <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+              <div className="text-xs font-semibold text-gray-600 mb-2">Win Probability</div>
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Vegas lines:</span>
+                  <span className="font-bold text-gray-900">
+                    {isEliminated ? 'Out' : `${Math.round(winProbability.vegas * 100)}%`}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">If all 50/50:</span>
+                  <span className="font-bold text-gray-900">
+                    {isEliminated ? 'Out' : `${Math.round(winProbability.fiftyFifty * 100)}%`}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
           <InlineBracket games={games} participantId={participant.id} />
         </div>
       )}

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Game, LeaderboardEntry } from '../../types';
 import type { Participant } from '../../types';
+import type { WinProbabilities } from '../../services/probabilityCalculator';
 import { Users, Calendar, TrendingUp } from 'lucide-react';
 import GameCard from './GameCard';
 import MiniLeaderboard from './MiniLeaderboard';
@@ -11,6 +12,8 @@ interface HomePageProps {
   leaderboard: LeaderboardEntry[];
   participants: Participant[];
   onViewBracket: (participantId: string) => void;
+  winProbabilities?: Map<string, WinProbabilities>;
+  eliminatedParticipants?: Map<string, boolean>;
 }
 
 export default function HomePage({
@@ -18,6 +21,8 @@ export default function HomePage({
   leaderboard,
   participants,
   onViewBracket,
+  winProbabilities,
+  eliminatedParticipants,
 }: HomePageProps) {
   const [activeTab, setActiveTab] = useState<'games' | 'brackets'>('brackets');
 
@@ -222,6 +227,8 @@ export default function HomePage({
                     entry={entry}
                     games={games}
                     onClick={() => onViewBracket(entry.participant.id)}
+                    winProbability={winProbabilities?.get(entry.participant.name)}
+                    isEliminated={eliminatedParticipants?.get(entry.participant.name)}
                   />
                 ))}
               </div>
@@ -235,6 +242,8 @@ export default function HomePage({
               <MiniLeaderboard
                 entries={leaderboard}
                 onViewBracket={onViewBracket}
+                winProbabilities={winProbabilities}
+                eliminatedParticipants={eliminatedParticipants}
               />
             </div>
 

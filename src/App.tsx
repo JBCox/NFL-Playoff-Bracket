@@ -3,6 +3,8 @@ import type { Game } from './types';
 import { participants, getParticipantById } from './data/participants';
 import { fetchAllPlayoffGames, getPollingInterval } from './services/espnClient';
 import { generateLeaderboard, calculateParticipantScore, getGameResults } from './services/scoreCalculator';
+import { useOddsData } from './hooks/useOddsData';
+import { useWinProbabilities } from './hooks/useWinProbabilities';
 import HomePage from './components/home/HomePage';
 import Bracket from './components/bracket/Bracket';
 import { ArrowLeft, RefreshCw } from 'lucide-react';
@@ -20,6 +22,14 @@ function App() {
   const leaderboard = generateLeaderboard(participants, games);
   const results = getGameResults(games);
   const score = selectedParticipant ? calculateParticipantScore(selectedParticipant, results) : null;
+
+  // Fetch odds and calculate win probabilities
+  const { oddsMap } = useOddsData();
+  const { probabilities: winProbabilities, isEliminated: eliminatedParticipants } = useWinProbabilities(
+    games,
+    participants,
+    oddsMap
+  );
 
   // Fetch games from ESPN
   const fetchGames = useCallback(async () => {
@@ -78,6 +88,8 @@ function App() {
           leaderboard={leaderboard}
           participants={participants}
           onViewBracket={handleViewBracket}
+          winProbabilities={winProbabilities}
+          eliminatedParticipants={eliminatedParticipants}
         />
 
         {/* Footer */}
