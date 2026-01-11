@@ -19,7 +19,7 @@ function App() {
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
 
   const selectedParticipant = selectedParticipantId ? getParticipantById(selectedParticipantId) : null;
-  const leaderboard = generateLeaderboard(participants, games);
+  const baseLeaderboard = generateLeaderboard(participants, games);
   const results = getGameResults(games);
   const score = selectedParticipant ? calculateParticipantScore(selectedParticipant, results) : null;
 
@@ -30,6 +30,22 @@ function App() {
     participants,
     oddsMap
   );
+
+  // Re-sort leaderboard to use win probability as tiebreaker instead of possibleRemaining
+  const leaderboard = [...baseLeaderboard].sort((a, b) => {
+    // Primary sort: score (descending)
+    if (b.score.total !== a.score.total) {
+      return b.score.total - a.score.total;
+    }
+    // Tiebreaker 1: win probability (descending)
+    const probA = winProbabilities?.get(a.participant.name)?.vegas ?? 0;
+    const probB = winProbabilities?.get(b.participant.name)?.vegas ?? 0;
+    if (probB !== probA) {
+      return probB - probA;
+    }
+    // Tiebreaker 2: possible remaining points (descending) - fallback for equal probabilities
+    return b.possibleRemaining - a.possibleRemaining;
+  });
 
   // Fetch games from ESPN
   const fetchGames = useCallback(async () => {

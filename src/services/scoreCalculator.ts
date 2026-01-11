@@ -35,7 +35,7 @@ export function mapESPNGameToSlot(game: Game): string | null {
       if (teams.includes('JAX') || teams.includes('BUF')) return 'afcWc2';
       if (teams.includes('NE') || teams.includes('LAC')) return 'afcWc3';
     } else {
-      // NFC WC games: Car/LAR, Phi/SF, Chi/GB
+      // NFC WC games based on actual ESPN schedule
       const teams = [game.homeTeam?.abbreviation, game.awayTeam?.abbreviation];
       if (teams.includes('CAR') || teams.includes('LAR')) return 'nfcWc1';
       if (teams.includes('PHI') || teams.includes('SF')) return 'nfcWc2';

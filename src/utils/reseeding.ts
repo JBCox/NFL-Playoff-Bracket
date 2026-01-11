@@ -76,7 +76,7 @@ export function calculateDivisionalMatchups(
     return result;
   }
 
-  // Sort by seed (ascending - lowest seed first)
+  // Sort by seed descending (highest seed number = lowest-seeded team first)
   winners.sort((a, b) => b.seed - a.seed);
 
   // Reseeding:

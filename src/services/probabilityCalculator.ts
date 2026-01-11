@@ -12,18 +12,15 @@ const ALL_GAME_SLOTS = [
   'superBowl'
 ] as const;
 
-// Fixed Wild Card matchups (lower seed @ higher seed)
+// Fixed Wild Card matchups (based on actual ESPN schedule)
 const WC_MATCHUPS: Record<string, [string, string]> = {
-  afcWc1: ['PIT', 'HOU'],   // #5 @ #2
-  afcWc2: ['JAX', 'BUF'],   // #7 @ #3
-  afcWc3: ['NE', 'LAC'],    // #6 @ #4
-  nfcWc1: ['CAR', 'LAR'],   // #7 @ #6 (weird seeding?)
-  nfcWc2: ['PHI', 'SF'],    // #2 @ #4 - wait this doesn't seem right
-  nfcWc3: ['CHI', 'GB'],    // #5 @ #3
+  afcWc1: ['PIT', 'HOU'],   // PIT @ HOU
+  afcWc2: ['JAX', 'BUF'],   // JAX @ BUF
+  afcWc3: ['NE', 'LAC'],    // NE @ LAC
+  nfcWc1: ['CAR', 'LAR'],   // CAR @ LAR
+  nfcWc2: ['PHI', 'SF'],    // PHI @ SF
+  nfcWc3: ['CHI', 'GB'],    // CHI @ GB
 };
-
-// Actually, let me read the WC matchups from the game data...
-// The matchups are: seed 2 hosts 7, seed 3 hosts 6, seed 4 hosts 5
 
 export interface WinProbabilities {
   fiftyFifty: number;
