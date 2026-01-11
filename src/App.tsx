@@ -43,8 +43,12 @@ function App() {
     if (probB !== probA) {
       return probB - probA;
     }
-    // Tiebreaker 2: possible remaining points (descending) - fallback for equal probabilities
-    return b.possibleRemaining - a.possibleRemaining;
+    // Tiebreaker 2: possible remaining points (descending)
+    if (b.possibleRemaining !== a.possibleRemaining) {
+      return b.possibleRemaining - a.possibleRemaining;
+    }
+    // Tiebreaker 3: alphabetical by name (for stable sorting when all else is equal)
+    return a.participant.name.localeCompare(b.participant.name);
   });
 
   // Fetch games from ESPN
