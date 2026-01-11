@@ -1,73 +1,108 @@
-# React + TypeScript + Vite
+# NFL Playoff Bracket Challenge
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React + TypeScript web app for tracking NFL playoff bracket picks and scores.
 
-Currently, two official plugins are available:
+**Live Site:** https://corvaerbracket.netlify.app
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## React Compiler
+- View all participants' bracket picks
+- Live score updates from ESPN API
+- Mobile-responsive design with expandable bracket cards
+- AFC/NFC conference toggle with mirrored bracket layouts
+- Real-time leaderboard with score breakdowns
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+- React 18 + TypeScript
+- Vite (build tool)
+- Tailwind CSS (styling)
+- Netlify (hosting)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Development
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Prerequisites
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- Node.js 18+
+- npm
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Setup
+
+```bash
+# Install dependencies
+npm install
+
+# Start dev server
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The app will be available at http://localhost:5173
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Build
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run build
 ```
+
+Build output goes to the `dist/` folder.
+
+## Deployment
+
+The app is hosted on Netlify. Deployments are done manually via the Netlify CLI.
+
+### Deploy to Production
+
+```bash
+# Build the app first
+npm run build
+
+# Deploy to Netlify (requires netlify-cli)
+npx netlify deploy --prod --dir dist --no-build
+```
+
+The `--no-build` flag is required because the build is done separately with `npm run build`. Without this flag, Netlify tries to run its own build process which can cause configuration issues.
+
+### Netlify Configuration
+
+The `netlify.toml` file contains:
+- Build command: `npm run build`
+- Publish directory: `dist`
+- SPA redirect rules (all routes -> index.html)
+
+The `.netlify/state.json` file stores the site ID for CLI deployments.
+
+## Project Structure
+
+```
+src/
+  components/
+    bracket/        # Bracket display components
+      Bracket.tsx      # Full bracket page (desktop + mobile views)
+      InlineBracket.tsx # Expandable inline bracket for mobile cards
+      GameSlot.tsx     # Individual game matchup display
+      TeamBox.tsx      # Team display with logo/score
+    home/           # Home page components
+      HomePage.tsx     # Main page with tabs
+      BracketPreview.tsx # Participant card (expandable on mobile)
+      GameCard.tsx     # Game display for Games tab
+      MiniLeaderboard.tsx # Desktop sidebar leaderboard
+  data/
+    participants.ts  # Participant picks data
+    teams.ts         # Team info and logos
+  services/
+    espnApi.ts       # ESPN API integration
+    scoreCalculator.ts # Score calculation logic
+  utils/
+    elimination.ts   # Team elimination tracking
+    reseeding.ts     # Playoff reseeding logic
+    expectedMatchups.ts # Expected opponent calculations
+  types.ts          # TypeScript type definitions
+```
+
+## Scoring
+
+- Wild Card: 1 point per correct pick
+- Divisional: 2 points per correct pick
+- Conference: 3 points per correct pick
+- Super Bowl: 5 points for correct pick
+- **Maximum: 25 points**
