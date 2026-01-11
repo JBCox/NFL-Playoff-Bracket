@@ -220,6 +220,7 @@ export default function HomePage({
                   <BracketPreview
                     key={entry.participant.id}
                     entry={entry}
+                    games={games}
                     onClick={() => onViewBracket(entry.participant.id)}
                   />
                 ))}
