@@ -91,10 +91,23 @@ export function parseESPNEvent(event: ESPNEvent, slot: number = 1): Game {
   };
 }
 
-// Fetch and parse all playoff games
+// Fetch and parse all playoff games (all weeks)
 export async function fetchAllPlayoffGames(): Promise<Game[]> {
   try {
-    const scoreboard = await fetchPlayoffScoreboard();
+    // Fetch all 4 playoff weeks in parallel
+    const [week1, week2, week3, week4] = await Promise.all([
+      fetchPlayoffWeek(1), // Wild Card
+      fetchPlayoffWeek(2), // Divisional
+      fetchPlayoffWeek(3), // Conference
+      fetchPlayoffWeek(4), // Super Bowl
+    ]);
+
+    const allEvents = [
+      ...week1.events,
+      ...week2.events,
+      ...week3.events,
+      ...week4.events,
+    ];
 
     // Group by round and assign slots
     const gamesByRound: Record<string, Game[]> = {
@@ -104,7 +117,7 @@ export async function fetchAllPlayoffGames(): Promise<Game[]> {
       superbowl: [],
     };
 
-    scoreboard.events.forEach((event, index) => {
+    allEvents.forEach((event, index) => {
       const game = parseESPNEvent(event, index + 1);
       gamesByRound[game.round].push(game);
     });

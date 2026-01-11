@@ -19,12 +19,38 @@ export default function HomePage({
   participants,
   onViewBracket,
 }: HomePageProps) {
-  const [activeTab, setActiveTab] = useState<'games' | 'brackets'>('games');
+  const [activeTab, setActiveTab] = useState<'games' | 'brackets'>('brackets');
 
   // Separate games by status
   const liveGames = games.filter(g => g.status === 'live');
   const upcomingGames = games.filter(g => g.status === 'scheduled');
   const completedGames = games.filter(g => g.status === 'final');
+
+  // Calculate leader stats with tie handling
+  const getLeaderInfo = () => {
+    if (leaderboard.length === 0) return { display: 'TBD', gap: null };
+
+    const topScore = leaderboard[0]?.score.total ?? 0;
+    const leadersAtTop = leaderboard.filter(e => e.score.total === topScore);
+    const secondPlaceScore = leaderboard.find(e => e.score.total < topScore)?.score.total;
+    const gap = secondPlaceScore !== undefined ? topScore - secondPlaceScore : null;
+
+    let display: string;
+    if (leadersAtTop.length === 1) {
+      // Single leader - show first name only
+      display = leadersAtTop[0].participant.name.split(' ')[0];
+    } else if (leadersAtTop.length === 2) {
+      // 2-way tie - show both first names
+      display = `${leadersAtTop[0].participant.name.split(' ')[0]} & ${leadersAtTop[1].participant.name.split(' ')[0]}`;
+    } else {
+      // 3+ way tie
+      display = `${leadersAtTop.length}-way tie`;
+    }
+
+    return { display, score: topScore, gap, tiedCount: leadersAtTop.length };
+  };
+
+  const leaderInfo = getLeaderInfo();
 
   // Group games by round
   const gamesByRound = {
@@ -37,33 +63,47 @@ export default function HomePage({
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Hero Header */}
-      <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white py-8">
+      <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white py-5 sm:py-8">
         <div className="max-w-7xl mx-auto px-4">
-          <h1 className="text-4xl font-bold text-center mb-2">
-            🏈 NFL Playoff Bracket Challenge
+          <div className="text-center mb-1">
+            <span className="text-xs sm:text-sm font-semibold text-gray-400 tracking-widest uppercase">Corvaer</span>
+          </div>
+          <h1 className="text-2xl sm:text-4xl font-bold text-center mb-2">
+            <span className="hidden sm:inline">🏈 </span>NFL Playoff Bracket Challenge
           </h1>
-          <p className="text-gray-400 text-center">2025-26 Season</p>
+          <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3">
+            <span className="text-gray-400 text-sm sm:text-base">2025-26 Season</span>
+            <span className="text-gray-600 hidden sm:inline">•</span>
+            <div className="bg-gradient-to-r from-green-600 to-green-500 text-white text-xs sm:text-sm font-bold px-3 py-1 rounded-full shadow-md">
+              💰 $10 entry • $110 to winner
+            </div>
+          </div>
 
-          {/* Quick Stats */}
-          <div className="flex justify-center gap-8 mt-6">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-yellow-400">{participants.length}</div>
-              <div className="text-sm text-gray-400">Players</div>
+          {/* Quick Stats - wraps on mobile */}
+          <div className="flex flex-wrap justify-center gap-4 sm:gap-8 mt-4 sm:mt-6">
+            <div className="text-center min-w-[60px]">
+              <div className="text-2xl sm:text-3xl font-bold text-green-400">{completedGames.length}</div>
+              <div className="text-xs sm:text-sm text-gray-400">Games Played</div>
             </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-green-400">{completedGames.length}</div>
-              <div className="text-sm text-gray-400">Games Played</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-blue-400">{upcomingGames.length}</div>
-              <div className="text-sm text-gray-400">Games Left</div>
+            <div className="text-center min-w-[60px]">
+              <div className="text-2xl sm:text-3xl font-bold text-blue-400">{upcomingGames.length}</div>
+              <div className="text-xs sm:text-sm text-gray-400">Remaining</div>
             </div>
             {liveGames.length > 0 && (
-              <div className="text-center">
-                <div className="text-3xl font-bold text-red-400 live-indicator">{liveGames.length}</div>
-                <div className="text-sm text-gray-400">Live Now!</div>
+              <div className="text-center min-w-[60px]">
+                <div className="text-2xl sm:text-3xl font-bold text-red-400 live-indicator">{liveGames.length}</div>
+                <div className="text-xs sm:text-sm text-gray-400">Live!</div>
               </div>
             )}
+            <div className="text-center">
+              <div className="text-lg sm:text-2xl font-bold text-yellow-400">
+                <span className="truncate">{leaderInfo.display}</span>
+                {leaderInfo.gap !== null && leaderInfo.gap > 0 && (
+                  <span className="text-orange-400 text-base sm:text-xl ml-1">(+{leaderInfo.gap})</span>
+                )}
+              </div>
+              <div className="text-xs sm:text-sm text-gray-400">Leader</div>
+            </div>
           </div>
         </div>
       </div>
@@ -87,28 +127,30 @@ export default function HomePage({
             )}
 
             {/* Tab Navigation */}
-            <div className="flex gap-2 border-b border-gray-200">
+            <div className="flex gap-1 sm:gap-2 border-b border-gray-200">
               <button
                 onClick={() => setActiveTab('games')}
-                className={`px-4 py-2 font-medium transition-colors ${
+                className={`flex-1 sm:flex-none px-3 sm:px-4 py-3 sm:py-2 font-medium transition-all text-sm sm:text-base active:bg-gray-50 ${
                   activeTab === 'games'
                     ? 'text-blue-600 border-b-2 border-blue-600'
-                    : 'text-gray-500 hover:text-gray-700'
+                    : 'text-gray-500 hover:text-gray-700 active:text-gray-800'
                 }`}
               >
-                <Calendar className="w-4 h-4 inline mr-2" />
-                Games by Round
+                <Calendar className="w-4 h-4 inline mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">Games by Round</span>
+                <span className="sm:hidden">Games</span>
               </button>
               <button
                 onClick={() => setActiveTab('brackets')}
-                className={`px-4 py-2 font-medium transition-colors ${
+                className={`flex-1 sm:flex-none px-3 sm:px-4 py-3 sm:py-2 font-medium transition-all text-sm sm:text-base active:bg-gray-50 ${
                   activeTab === 'brackets'
                     ? 'text-blue-600 border-b-2 border-blue-600'
-                    : 'text-gray-500 hover:text-gray-700'
+                    : 'text-gray-500 hover:text-gray-700 active:text-gray-800'
                 }`}
               >
-                <Users className="w-4 h-4 inline mr-2" />
-                All Brackets
+                <Users className="w-4 h-4 inline mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">All Brackets</span>
+                <span className="sm:hidden">Brackets</span>
               </button>
             </div>
 
@@ -173,7 +215,7 @@ export default function HomePage({
 
             {/* Brackets Tab */}
             {activeTab === 'brackets' && (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                 {leaderboard.map(entry => (
                   <BracketPreview
                     key={entry.participant.id}
@@ -187,11 +229,13 @@ export default function HomePage({
 
           {/* Sidebar - Right column */}
           <div className="space-y-6">
-            {/* Leaderboard */}
-            <MiniLeaderboard
-              entries={leaderboard}
-              onViewBracket={onViewBracket}
-            />
+            {/* Leaderboard - hidden on mobile since Brackets tab shows same info */}
+            <div className="hidden lg:block">
+              <MiniLeaderboard
+                entries={leaderboard}
+                onViewBracket={onViewBracket}
+              />
+            </div>
 
             {/* Scoring Legend */}
             <div className="bg-white rounded-xl shadow-md p-4">

@@ -1,5 +1,5 @@
 import type { LeaderboardEntry } from '../../types';
-import { Trophy, Check, Clock } from 'lucide-react';
+import { Trophy, Clock } from 'lucide-react';
 
 interface BracketPreviewProps {
   entry: LeaderboardEntry;
@@ -7,7 +7,7 @@ interface BracketPreviewProps {
 }
 
 export default function BracketPreview({ entry, onClick }: BracketPreviewProps) {
-  const { participant, score, rank, correctPicks, possibleRemaining } = entry;
+  const { participant, score, rank, possibleRemaining } = entry;
 
   const getRankBadge = () => {
     switch (rank) {
@@ -26,7 +26,7 @@ export default function BracketPreview({ entry, onClick }: BracketPreviewProps) 
   return (
     <button
       onClick={onClick}
-      className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all p-4 text-left w-full group hover:scale-[1.02]"
+      className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all p-4 text-left w-full group hover:scale-[1.02] active:scale-[0.98] active:shadow-sm"
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
@@ -47,11 +47,13 @@ export default function BracketPreview({ entry, onClick }: BracketPreviewProps) 
         />
       </div>
 
-      {/* Stats */}
-      <div className="flex justify-between text-xs">
-        <div className="flex items-center gap-1 text-green-600">
-          <Check className="w-3 h-3" />
-          <span>{correctPicks} correct</span>
+      {/* Stats & Round Breakdown */}
+      <div className="flex items-center justify-between text-xs">
+        <div className="flex items-center gap-3 text-gray-500">
+          <span><span className="text-gray-400">WC</span> <span className="font-bold text-gray-700">{score.wildCard}/6</span></span>
+          <span><span className="text-gray-400">Div</span> <span className="font-bold text-gray-700">{score.divisional}/8</span></span>
+          <span><span className="text-gray-400">Conf</span> <span className="font-bold text-gray-700">{score.conference}/6</span></span>
+          <span><span className="text-gray-400">SB</span> <span className="font-bold text-gray-700">{score.superBowl}/5</span></span>
         </div>
         <div className="flex items-center gap-1 text-gray-500">
           <Clock className="w-3 h-3" />
@@ -59,31 +61,9 @@ export default function BracketPreview({ entry, onClick }: BracketPreviewProps) 
         </div>
       </div>
 
-      {/* Round Breakdown */}
-      <div className="mt-3 pt-3 border-t border-gray-100">
-        <div className="grid grid-cols-4 gap-1 text-center text-xs">
-          <div>
-            <div className="text-gray-400">WC</div>
-            <div className="font-bold">{score.wildCard}/6</div>
-          </div>
-          <div>
-            <div className="text-gray-400">Div</div>
-            <div className="font-bold">{score.divisional}/8</div>
-          </div>
-          <div>
-            <div className="text-gray-400">Conf</div>
-            <div className="font-bold">{score.conference}/6</div>
-          </div>
-          <div>
-            <div className="text-gray-400">SB</div>
-            <div className="font-bold">{score.superBowl}/5</div>
-          </div>
-        </div>
-      </div>
-
-      {/* View prompt */}
-      <div className="mt-3 text-center text-xs text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
-        Click to view full bracket →
+      {/* View prompt - visible on mobile, hover-enhanced on desktop */}
+      <div className="mt-3 text-center text-xs text-blue-600 opacity-60 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+        Tap to view full bracket →
       </div>
     </button>
   );

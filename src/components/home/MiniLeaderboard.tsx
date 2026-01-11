@@ -47,7 +47,7 @@ export default function MiniLeaderboard({ entries, onViewBracket }: MiniLeaderbo
           <button
             key={entry.participant.id}
             onClick={() => onViewBracket(entry.participant.id)}
-            className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors text-left border-l-4 ${getRankStyle(entry.rank)}`}
+            className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-50 active:bg-gray-100 transition-colors text-left border-l-4 ${getRankStyle(entry.rank)}`}
           >
             {/* Rank */}
             <div className="w-6 flex justify-center">
@@ -60,7 +60,7 @@ export default function MiniLeaderboard({ entries, onViewBracket }: MiniLeaderbo
                 {entry.participant.name}
               </div>
               <div className="text-xs text-gray-500">
-                {entry.correctPicks} correct • {entry.possibleRemaining} pts left
+                {entry.possibleRemaining} pts still possible
               </div>
             </div>
 

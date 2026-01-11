@@ -7,9 +7,10 @@ interface GameSlotProps {
   expectedOpponent?: string | null;  // The opponent the participant expects based on their picks
   eliminatedTeams?: Set<string>;
   className?: string;
+  compact?: boolean; // Smaller variant for mobile bracket view
 }
 
-export default function GameSlot({ game, participantPick, expectedOpponent, eliminatedTeams, className = '' }: GameSlotProps) {
+export default function GameSlot({ game, participantPick, expectedOpponent, eliminatedTeams, className = '', compact = false }: GameSlotProps) {
   // Check if the picked team is eliminated
   const isPickEliminated = participantPick && eliminatedTeams?.has(participantPick);
 
@@ -73,17 +74,18 @@ export default function GameSlot({ game, participantPick, expectedOpponent, elim
   return (
     <div
       className={`
-        flex flex-col gap-0.5 bg-white rounded-lg shadow-sm
-        border-2 ${getConferenceColor()}
+        flex flex-col bg-white shadow-sm
+        ${compact ? 'gap-px rounded border' : 'gap-0.5 rounded-lg border-2'}
+        ${getConferenceColor()}
         ${isLive ? 'ring-2 ring-red-400 ring-opacity-50' : ''}
         ${className}
       `}
     >
       {/* Live indicator */}
       {isLive && (
-        <div className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 text-center rounded-t-md">
-          <span className="live-indicator">LIVE</span>
-          {game.displayClock && ` - Q${game.period} ${game.displayClock}`}
+        <div className={`bg-red-500 text-white font-bold text-center ${compact ? 'text-[10px] px-1 py-px rounded-t' : 'text-xs px-2 py-0.5 rounded-t-md'}`}>
+          <span className="live-indicator">{compact ? '' : 'LIVE'}</span>
+          {!compact && game.displayClock && ` - Q${game.period} ${game.displayClock}`}
         </div>
       )}
 
@@ -96,6 +98,7 @@ export default function GameSlot({ game, participantPick, expectedOpponent, elim
         pickStatus={getPickStatus(showPickInAwaySlot ? participantPick : awayTeamAbbr)}
         pickedTeamAbbr={showPickInAwaySlot ? participantPick : (showOpponentInAwaySlot ? expectedOpponent : undefined)}
         isExpectedOpponent={showOpponentInAwaySlot}
+        compact={compact}
       />
 
       {/* Divider */}
@@ -110,10 +113,11 @@ export default function GameSlot({ game, participantPick, expectedOpponent, elim
         pickStatus={getPickStatus(showPickInHomeSlot ? participantPick : homeTeamAbbr)}
         pickedTeamAbbr={showPickInHomeSlot ? participantPick : (showOpponentInHomeSlot ? expectedOpponent : undefined)}
         isExpectedOpponent={showOpponentInHomeSlot}
+        compact={compact}
       />
 
-      {/* Game status footer */}
-      {game.status === 'final' && (
+      {/* Game status footer - hidden in compact mode */}
+      {game.status === 'final' && !compact && (
         <div className="bg-gray-100 text-gray-600 text-xs text-center py-0.5 rounded-b-md">
           FINAL
         </div>

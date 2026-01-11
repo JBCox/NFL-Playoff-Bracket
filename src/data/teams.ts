@@ -1,5 +1,10 @@
 import type { Team, Conference } from '../types';
 
+// Helper to generate ESPN logo URL from abbreviation
+export function getLogoUrl(abbreviation: string): string {
+  return `https://a.espncdn.com/i/teamlogos/nfl/500/${abbreviation.toLowerCase()}.png`;
+}
+
 // 2025-26 NFL Playoff Teams
 export const playoffTeams: Team[] = [
   // AFC Teams
@@ -12,6 +17,7 @@ export const playoffTeams: Team[] = [
     seed: 1,
     primaryColor: '#FB4F14',
     secondaryColor: '#002244',
+    logo: getLogoUrl('DEN'),
   },
   {
     id: 'hou',
@@ -22,6 +28,7 @@ export const playoffTeams: Team[] = [
     seed: 2,
     primaryColor: '#03202F',
     secondaryColor: '#A71930',
+    logo: getLogoUrl('HOU'),
   },
   {
     id: 'buf',
@@ -32,6 +39,7 @@ export const playoffTeams: Team[] = [
     seed: 3,
     primaryColor: '#00338D',
     secondaryColor: '#C60C30',
+    logo: getLogoUrl('BUF'),
   },
   {
     id: 'lac',
@@ -42,6 +50,7 @@ export const playoffTeams: Team[] = [
     seed: 4,
     primaryColor: '#0080C6',
     secondaryColor: '#FFC20E',
+    logo: getLogoUrl('LAC'),
   },
   {
     id: 'pit',
@@ -52,6 +61,7 @@ export const playoffTeams: Team[] = [
     seed: 5,
     primaryColor: '#FFB612',
     secondaryColor: '#101820',
+    logo: getLogoUrl('PIT'),
   },
   {
     id: 'ne',
@@ -62,6 +72,7 @@ export const playoffTeams: Team[] = [
     seed: 6,
     primaryColor: '#002244',
     secondaryColor: '#C60C30',
+    logo: getLogoUrl('NE'),
   },
   {
     id: 'jax',
@@ -72,6 +83,7 @@ export const playoffTeams: Team[] = [
     seed: 7,
     primaryColor: '#006778',
     secondaryColor: '#D7A22A',
+    logo: getLogoUrl('JAX'),
   },
 
   // NFC Teams
@@ -84,6 +96,7 @@ export const playoffTeams: Team[] = [
     seed: 1,
     primaryColor: '#002244',
     secondaryColor: '#69BE28',
+    logo: getLogoUrl('SEA'),
   },
   {
     id: 'phi',
@@ -94,6 +107,7 @@ export const playoffTeams: Team[] = [
     seed: 2,
     primaryColor: '#004C54',
     secondaryColor: '#A5ACAF',
+    logo: getLogoUrl('PHI'),
   },
   {
     id: 'gb',
@@ -104,6 +118,7 @@ export const playoffTeams: Team[] = [
     seed: 3,
     primaryColor: '#203731',
     secondaryColor: '#FFB612',
+    logo: getLogoUrl('GB'),
   },
   {
     id: 'sf',
@@ -114,6 +129,7 @@ export const playoffTeams: Team[] = [
     seed: 4,
     primaryColor: '#AA0000',
     secondaryColor: '#B3995D',
+    logo: getLogoUrl('SF'),
   },
   {
     id: 'chi',
@@ -124,6 +140,7 @@ export const playoffTeams: Team[] = [
     seed: 5,
     primaryColor: '#0B162A',
     secondaryColor: '#C83803',
+    logo: getLogoUrl('CHI'),
   },
   {
     id: 'lar',
@@ -134,6 +151,7 @@ export const playoffTeams: Team[] = [
     seed: 6,
     primaryColor: '#003594',
     secondaryColor: '#FFA300',
+    logo: getLogoUrl('LAR'),
   },
   {
     id: 'car',
@@ -144,6 +162,7 @@ export const playoffTeams: Team[] = [
     seed: 7,
     primaryColor: '#0085CA',
     secondaryColor: '#101820',
+    logo: getLogoUrl('CAR'),
   },
 ];
 

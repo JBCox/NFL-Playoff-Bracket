@@ -81,7 +81,7 @@ function App() {
         />
 
         {/* Footer */}
-        <footer className="bg-gray-800 text-gray-400 text-center py-3 text-sm">
+        <footer className="bg-gray-800 text-gray-400 text-center py-3 text-sm safe-area-bottom">
           <div>Data from ESPN • Auto-updates every {getPollingInterval(games) / 1000}s</div>
           {lastUpdated && (
             <div className="text-xs mt-1">Last updated: {new Date(lastUpdated).toLocaleTimeString()}</div>
@@ -96,34 +96,36 @@ function App() {
     <div className="min-h-screen bg-gray-100 flex flex-col">
       {/* Header */}
       <header className="bg-gray-900 text-white shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          {/* Back Button */}
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2 sm:py-3 landscape-compact-header flex items-center justify-between gap-2">
+          {/* Back Button - icon only on mobile */}
           <button
             onClick={handleGoHome}
-            className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg transition-colors"
+            className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 p-2 sm:px-4 sm:py-2 rounded-lg transition-colors flex-shrink-0"
+            title="Back to Home"
           >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back to Home</span>
+            <ArrowLeft className="w-5 h-5 sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">Back to Home</span>
           </button>
 
-          {/* Title */}
-          <div className="text-center">
-            <h1 className="text-xl font-bold">{selectedParticipant?.name}'s Bracket</h1>
+          {/* Title - compact on mobile */}
+          <div className="text-center min-w-0 flex-1">
+            <h1 className="text-base sm:text-xl font-bold truncate">{selectedParticipant?.name}'s Bracket</h1>
             {score && (
-              <p className="text-sm text-gray-400">
-                {score.total} points • Rank #{leaderboard.find(e => e.participant.id === selectedParticipantId)?.rank || '-'}
+              <p className="text-xs sm:text-sm text-gray-400">
+                {score.total} pts • #{leaderboard.find(e => e.participant.id === selectedParticipantId)?.rank || '-'}
               </p>
             )}
           </div>
 
-          {/* Refresh */}
+          {/* Refresh - icon only on mobile */}
           <button
             onClick={fetchGames}
             disabled={isLoading}
-            className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+            className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 p-2 sm:px-4 sm:py-2 rounded-lg transition-colors disabled:opacity-50 flex-shrink-0"
+            title="Refresh"
           >
-            <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-            <span>Refresh</span>
+            <RefreshCw className={`w-5 h-5 sm:w-4 sm:h-4 ${isLoading ? 'animate-spin' : ''}`} />
+            <span className="hidden sm:inline">Refresh</span>
           </button>
         </div>
       </header>
@@ -143,28 +145,33 @@ function App() {
 
       {/* Participant Switcher */}
       <div className="bg-white border-t shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 py-3">
-          <div className="flex items-center gap-2 overflow-x-auto">
-            <span className="text-sm text-gray-500 flex-shrink-0">Quick switch:</span>
-            {leaderboard.map(entry => (
-              <button
-                key={entry.participant.id}
-                onClick={() => setSelectedParticipantId(entry.participant.id)}
-                className={`px-3 py-1 rounded-full text-sm font-medium transition-colors flex-shrink-0 ${
-                  entry.participant.id === selectedParticipantId
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                #{entry.rank} {entry.participant.name} ({entry.score.total})
-              </button>
-            ))}
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2 sm:py-3">
+          <div className="relative">
+            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-1 pr-6 sm:pr-0">
+              <span className="text-xs sm:text-sm text-gray-500 flex-shrink-0 hidden sm:block">Quick switch:</span>
+              {leaderboard.map(entry => (
+                <button
+                  key={entry.participant.id}
+                  onClick={() => setSelectedParticipantId(entry.participant.id)}
+                  className={`px-3 py-2 sm:py-1 rounded-full text-xs sm:text-sm font-medium transition-colors flex-shrink-0 min-h-[40px] sm:min-h-0 active:scale-95 ${
+                    entry.participant.id === selectedParticipantId
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 active:bg-gray-300'
+                  }`}
+                >
+                  <span className="sm:hidden">#{entry.rank} {entry.participant.name.split(' ')[0]}</span>
+                  <span className="hidden sm:inline">#{entry.rank} {entry.participant.name} ({entry.score.total})</span>
+                </button>
+              ))}
+            </div>
+            {/* Scroll fade indicator - mobile only */}
+            <div className="absolute right-0 top-0 bottom-1 w-8 bg-gradient-to-l from-white to-transparent pointer-events-none sm:hidden" />
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="bg-gray-800 text-gray-400 text-center py-2 text-sm">
+      <footer className="bg-gray-800 text-gray-400 text-center py-2 text-sm safe-area-bottom">
         Data from ESPN • Updates every {getPollingInterval(games) / 1000}s
       </footer>
     </div>

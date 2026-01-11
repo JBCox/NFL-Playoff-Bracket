@@ -35,40 +35,64 @@ export default function GameCard({ game, participants, showAllPicks = false }: G
     return 'border-l-red-600';
   };
 
+  // Format pickers list - show all first names
+  const formatPickers = (pickers: Participant[], isWinner: boolean, isLoser: boolean) => {
+    if (pickers.length === 0) {
+      return <span className="text-gray-400 italic">None</span>;
+    }
+
+    const firstName = (name: string) => name.split(' ')[0];
+    const baseClass = isWinner
+      ? 'text-green-700'
+      : isLoser
+        ? 'text-red-600'
+        : 'text-gray-700';
+
+    return (
+      <span className={baseClass}>
+        {pickers.map(p => firstName(p.name)).join(', ')}
+        {isWinner && <Check className="w-3 h-3 inline ml-1 flex-shrink-0" />}
+        {isLoser && <X className="w-3 h-3 inline ml-1 flex-shrink-0" />}
+      </span>
+    );
+  };
+
   return (
     <div className={`bg-gray-50 rounded-lg border-l-4 ${getConferenceColor()} overflow-hidden`}>
       {/* Live indicator */}
       {isLive && (
-        <div className="bg-red-500 text-white text-xs font-bold px-3 py-1 flex items-center gap-2">
+        <div className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 sm:px-3 sm:py-1 flex items-center gap-1 sm:gap-2">
           <span className="live-indicator">●</span>
           LIVE - Q{game.period} {game.displayClock}
         </div>
       )}
 
-      <div className="p-3">
-        {/* Matchup */}
-        <div className="grid grid-cols-[1fr_auto_1fr] gap-3 items-center">
+      <div className="p-2 sm:p-3">
+        {/* Matchup - Compact on mobile */}
+        <div className="grid grid-cols-[1fr_auto_1fr] gap-2 sm:gap-3 items-center">
           {/* Away Team */}
-          <div className={`text-center p-3 rounded-lg transition-all ${
+          <div className={`text-center p-2 sm:p-3 rounded-lg transition-all ${
             isAwayWinner
-              ? 'bg-green-100 border-2 border-green-500 shadow-md'
+              ? 'bg-green-100 border-2 border-green-500'
               : isFinal && !isAwayWinner
                 ? 'bg-gray-100 border-2 border-gray-200 opacity-60'
                 : 'bg-white border-2 border-gray-200'
           }`}>
-            <div className="flex items-center justify-center gap-2 mb-1">
-              {isAwayWinner && <Check className="w-5 h-5 text-green-600" />}
-              <div
-                className="w-4 h-4 rounded-full"
-                style={{ backgroundColor: game.awayTeam?.primaryColor }}
-              />
-              <span className="font-bold text-lg">{game.awayTeam?.shortName || 'TBD'}</span>
+            <div className="flex items-center justify-center gap-1 sm:gap-2">
+              {isAwayWinner && <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 flex-shrink-0" />}
+              {game.awayTeam?.logo && (
+                <img
+                  src={game.awayTeam.logo}
+                  alt={game.awayTeam.name}
+                  className="w-5 h-5 sm:w-6 sm:h-6 object-contain flex-shrink-0"
+                />
+              )}
+              <span className="font-bold text-sm sm:text-lg">
+                {game.awayTeam ? `#${game.awayTeam.seed} ${game.awayTeam.shortName}` : 'TBD'}
+              </span>
             </div>
-            {game.awayTeam && (
-              <div className="text-xs text-gray-500">#{game.awayTeam.seed} seed</div>
-            )}
             {(isLive || isFinal) && game.awayScore !== null && (
-              <div className={`text-2xl font-bold mt-1 ${isAwayWinner ? 'text-green-700' : 'text-gray-700'}`}>
+              <div className={`text-xl sm:text-2xl font-bold mt-1 ${isAwayWinner ? 'text-green-700' : 'text-gray-700'}`}>
                 {game.awayScore}
               </div>
             )}
@@ -76,103 +100,58 @@ export default function GameCard({ game, participants, showAllPicks = false }: G
 
           {/* VS / Score */}
           <div className="text-center">
-            <div className="text-gray-400 font-bold text-lg">
+            <div className="text-gray-400 font-bold text-sm sm:text-lg">
               {isFinal ? 'FINAL' : isLive ? 'VS' : '@'}
             </div>
           </div>
 
           {/* Home Team */}
-          <div className={`text-center p-3 rounded-lg transition-all ${
+          <div className={`text-center p-2 sm:p-3 rounded-lg transition-all ${
             isHomeWinner
-              ? 'bg-green-100 border-2 border-green-500 shadow-md'
+              ? 'bg-green-100 border-2 border-green-500'
               : isFinal && !isHomeWinner
                 ? 'bg-gray-100 border-2 border-gray-200 opacity-60'
                 : 'bg-white border-2 border-gray-200'
           }`}>
-            <div className="flex items-center justify-center gap-2 mb-1">
-              <div
-                className="w-4 h-4 rounded-full"
-                style={{ backgroundColor: game.homeTeam?.primaryColor }}
-              />
-              <span className="font-bold text-lg">{game.homeTeam?.shortName || 'TBD'}</span>
-              {isHomeWinner && <Check className="w-5 h-5 text-green-600" />}
+            <div className="flex items-center justify-center gap-1 sm:gap-2">
+              {game.homeTeam?.logo && (
+                <img
+                  src={game.homeTeam.logo}
+                  alt={game.homeTeam.name}
+                  className="w-5 h-5 sm:w-6 sm:h-6 object-contain flex-shrink-0"
+                />
+              )}
+              <span className="font-bold text-sm sm:text-lg">
+                {game.homeTeam ? `#${game.homeTeam.seed} ${game.homeTeam.shortName}` : 'TBD'}
+              </span>
+              {isHomeWinner && <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 flex-shrink-0" />}
             </div>
-            {game.homeTeam && (
-              <div className="text-xs text-gray-500">#{game.homeTeam.seed} seed</div>
-            )}
             {(isLive || isFinal) && game.homeScore !== null && (
-              <div className={`text-2xl font-bold mt-1 ${isHomeWinner ? 'text-green-700' : 'text-gray-700'}`}>
+              <div className={`text-xl sm:text-2xl font-bold mt-1 ${isHomeWinner ? 'text-green-700' : 'text-gray-700'}`}>
                 {game.homeScore}
               </div>
             )}
           </div>
         </div>
 
-        {/* Picks Section */}
+        {/* Picks Section - Compact */}
         {showAllPicks && (game.awayTeam || game.homeTeam) && (
-          <div className="mt-3 pt-3 border-t border-gray-200">
-            <div className="text-xs font-bold text-gray-500 mb-2 text-center">WHO PICKED WHO</div>
-            <div className="grid grid-cols-2 gap-3">
+          <div className="mt-2 pt-2 border-t border-gray-200">
+            <div className="grid grid-cols-2 gap-2 text-[11px] sm:text-xs">
               {/* Away Team Pickers */}
-              <div className={`rounded-lg p-2 ${
-                isAwayWinner ? 'bg-green-50' : isFinal ? 'bg-red-50' : 'bg-gray-50'
+              <div className={`rounded px-2 py-1.5 ${
+                isAwayWinner ? 'bg-green-50' : isFinal ? 'bg-red-50' : 'bg-gray-100'
               }`}>
-                <div className="text-xs font-medium text-gray-600 mb-1 text-center">
-                  {game.awayTeam?.abbreviation} ({awayPickers.length})
-                </div>
-                <div className="flex flex-wrap gap-1 justify-center">
-                  {awayPickers.length === 0 ? (
-                    <span className="text-xs text-gray-400 italic">No picks</span>
-                  ) : (
-                    awayPickers.map(p => (
-                      <span
-                        key={p.id}
-                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
-                          isAwayWinner
-                            ? 'bg-green-200 text-green-800'
-                            : isFinal
-                              ? 'bg-red-200 text-red-800'
-                              : 'bg-blue-100 text-blue-800'
-                        }`}
-                      >
-                        {p.name}
-                        {isAwayWinner && <Check className="w-3 h-3" />}
-                        {isFinal && !isAwayWinner && <X className="w-3 h-3" />}
-                      </span>
-                    ))
-                  )}
-                </div>
+                <div className="font-semibold text-gray-500 mb-0.5">{game.awayTeam?.abbreviation} ({awayPickers.length})</div>
+                <div className="leading-tight">{formatPickers(awayPickers, isAwayWinner, isFinal && !isAwayWinner)}</div>
               </div>
 
               {/* Home Team Pickers */}
-              <div className={`rounded-lg p-2 ${
-                isHomeWinner ? 'bg-green-50' : isFinal ? 'bg-red-50' : 'bg-gray-50'
+              <div className={`rounded px-2 py-1.5 ${
+                isHomeWinner ? 'bg-green-50' : isFinal ? 'bg-red-50' : 'bg-gray-100'
               }`}>
-                <div className="text-xs font-medium text-gray-600 mb-1 text-center">
-                  {game.homeTeam?.abbreviation} ({homePickers.length})
-                </div>
-                <div className="flex flex-wrap gap-1 justify-center">
-                  {homePickers.length === 0 ? (
-                    <span className="text-xs text-gray-400 italic">No picks</span>
-                  ) : (
-                    homePickers.map(p => (
-                      <span
-                        key={p.id}
-                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
-                          isHomeWinner
-                            ? 'bg-green-200 text-green-800'
-                            : isFinal
-                              ? 'bg-red-200 text-red-800'
-                              : 'bg-blue-100 text-blue-800'
-                        }`}
-                      >
-                        {p.name}
-                        {isHomeWinner && <Check className="w-3 h-3" />}
-                        {isFinal && !isHomeWinner && <X className="w-3 h-3" />}
-                      </span>
-                    ))
-                  )}
-                </div>
+                <div className="font-semibold text-gray-500 mb-0.5">{game.homeTeam?.abbreviation} ({homePickers.length})</div>
+                <div className="leading-tight">{formatPickers(homePickers, isHomeWinner, isFinal && !isHomeWinner)}</div>
               </div>
             </div>
           </div>

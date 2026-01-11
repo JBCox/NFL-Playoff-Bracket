@@ -66,3 +66,52 @@ body {
 .live-indicator {
   animation: live-pulse 2s ease-in-out infinite;
 }
+
+/* Hide scrollbar for horizontal scroll areas on mobile */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Safe area insets for notched phones (iPhone X+) */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.safe-area-top {
+  padding-top: env(safe-area-inset-top, 0);
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .live-indicator {
+    animation: none;
+  }
+
+  * {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Landscape mode optimizations for mobile */
+@media (orientation: landscape) and (max-height: 500px) {
+  /* Reduce header height in landscape */
+  .landscape-compact-header {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  /* Hide non-essential elements in landscape */
+  .landscape-hide {
+    display: none;
+  }
+
+  /* Make bracket view use more horizontal space */
+  .landscape-bracket {
+    padding: 0.5rem;
+  }
+}
