@@ -36,7 +36,7 @@ function weekToRound(week: number | undefined): Round {
 function parseStatus(statusName: string): GameStatus {
   const name = statusName.toLowerCase();
   if (name.includes('final')) return 'final';
-  if (name.includes('progress') || name.includes('live')) return 'live';
+  if (name.includes('progress') || name.includes('live') || name.includes('halftime')) return 'live';
   if (name.includes('postponed')) return 'postponed';
   return 'scheduled';
 }
